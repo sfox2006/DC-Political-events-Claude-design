@@ -1568,8 +1568,8 @@
     els.sidebar.setAttribute("aria-modal", "true");
     els.sidebar.setAttribute("aria-labelledby", "filters-heading");
     if (els.sheetBackdrop) els.sheetBackdrop.hidden = false;
-    const search = els.search;
-    if (search) search.focus();
+    const start = document.getElementById("sheet-clear") || els.search;
+    if (start) start.focus();
   }
 
   function closeFilterSheet(restore) {
