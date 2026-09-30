@@ -25,8 +25,8 @@
 :root {
   --ink: #1a1714;
   --secondary: #5e574f;
-  --tertiary: #7c756d;
-  --muted: #a1978b;
+  --tertiary: #5c564f;
+  --muted: #645e57;
   --hairline: #e8ded3;
   --control: #cabeb1;
   --page: #ffffff;
@@ -144,7 +144,7 @@ a:hover {
   font-size: 10px;
   letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: #5a4a1a;
   line-height: 1;
 }
 
@@ -180,6 +180,9 @@ a:hover {
   display: block;
   height: 46px;
   width: auto;
+  filter: none;
+  opacity: 1;
+  mix-blend-mode: normal;
 }
 
 .brand-sub {
@@ -188,7 +191,7 @@ a:hover {
   font-weight: 400;
   font-size: 17px;
   line-height: 1;
-  color: var(--secondary);
+  color: #444;
 }
 
 .top-actions {
@@ -750,7 +753,7 @@ input[type="search"] {
   font-weight: 400;
   font-size: 13px;
   line-height: 1;
-  color: var(--secondary);
+  color: #444;
 }
 
 .tz-label {
@@ -758,7 +761,7 @@ input[type="search"] {
   font-weight: 400;
   font-size: 12px;
   line-height: 1;
-  color: var(--tertiary);
+  color: #444;
   white-space: nowrap;
 }
 

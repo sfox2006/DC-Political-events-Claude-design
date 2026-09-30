@@ -1,6 +1,6 @@
 /* DC Political Events — shell cache, network-first events.
    Bump SHELL_CACHE when HTML, CSS, JS, fonts, or icons change. */
-const SHELL_CACHE = "dc-events-claude-v1";
+const SHELL_CACHE = "dc-events-claude-v2";
 const DATA_CACHE = "dc-events-claude-data-v1";
 
 const SHELL = [
