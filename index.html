@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Upcoming DC politics and ideas events, in person, hybrid, and online, across the spectrum." />
+  <meta name="theme-color" content="#0D0E51" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="DC Events" />
+  <title>DC Political Events</title>
+  <link rel="canonical" href="https://sfox2006.github.io/DC-Political-events-Claude-design/" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/favicon.ico" sizes="any" />
+  <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32" />
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" sizes="180x180" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="DC Political Events" />
+  <meta property="og:title" content="DC Political Events" />
+  <meta property="og:description" content="Upcoming DC politics and ideas events, in person, hybrid, and online, across the spectrum." />
+  <meta property="og:url" content="https://sfox2006.github.io/DC-Political-events-Claude-design/" />
+  <meta property="og:image" content="https://sfox2006.github.io/DC-Political-events-Claude-design/assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="DC Political Events" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="DC Political Events" />
+  <meta name="twitter:description" content="Upcoming DC politics and ideas events, in person, hybrid, and online, across the spectrum." />
+  <meta name="twitter:image" content="https://sfox2006.github.io/DC-Political-events-Claude-design/assets/og-image.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to events</a>
+
+  <header class="topbar">
+    <h1 class="brand-title">
+      <button type="button" class="brand-home" id="brand-home">
+        <span class="eyebrow">Washington, DC</span>
+        <img class="brand-logo" src="assets/logo.png" srcset="assets/logo.png 1x, assets/logo@2x.png 2x" width="376" height="72" alt="DC Political Events" />
+        <span class="brand-sub">Events, my dear boy, events</span>
+      </button>
+    </h1>
+    <div class="top-actions">
+      <div class="top-actions-row">
+        <button type="button" class="view-toggle" id="view-toggle" aria-pressed="false">
+          <span class="ms" aria-hidden="true">calendar_month</span>
+          <span id="view-toggle-label">Calendar</span>
+        </button>
+        <button type="button" class="btn-text" id="refresh-events">
+          <span class="ms" aria-hidden="true">refresh</span>
+          Refresh
+        </button>
+        <button type="button" class="btn-text" id="about-open">About</button>
+        <button type="button" class="btn-text" id="install-app" hidden>Install app</button>
+        <a class="btn-email" href="https://docs.google.com/forms/d/e/1FAIpQLSdxzwrgjC-yztKV5_CSZXdpjx6nCL9oxtGnp3xctCMIwN-HSg/viewform" target="_blank" rel="noopener noreferrer">Weekly email</a>
+      </div>
+      <p class="refresh-status" id="refresh-status" role="status" aria-live="polite"></p>
+    </div>
+  </header>
+
+  <p class="pull-indicator" id="pull-indicator" hidden>Pull to refresh</p>
+  <div class="install-tip" id="install-tip" hidden>
+    <p>On iPhone or iPad: tap Share, then <strong>Add to Home Screen</strong>.</p>
+    <button type="button" class="btn-text" id="dismiss-install-tip">Dismiss</button>
+  </div>
+
+  <div class="layout">
+    <button type="button" class="sheet-backdrop" id="sheet-backdrop" aria-label="Close filters" hidden></button>
+    <aside class="sidebar" id="sidebar" aria-label="Event filters">
+      <div class="sheet-only sheet-chrome">
+        <span class="sheet-grabber" aria-hidden="true"></span>
+        <div class="sheet-title-row">
+          <h2 id="filters-heading">Filters</h2>
+          <button type="button" class="text-link" id="sheet-clear">Clear filters</button>
+        </div>
+      </div>
+
+      <div class="filter-block mini-cal-block">
+        <div class="mini-cal-head">
+          <span class="mini-cal-title" id="calendar-month">Calendar</span>
+          <span class="mini-nav">
+            <button type="button" id="cal-prev" aria-label="Previous month">
+              <span class="ms" aria-hidden="true">chevron_left</span>
+            </button>
+            <button type="button" id="cal-next" aria-label="Next month">
+              <span class="ms" aria-hidden="true">chevron_right</span>
+            </button>
+          </span>
+        </div>
+        <div class="mini-dow" aria-hidden="true">
+          <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+        </div>
+        <div class="mini-grid" id="calendar-grid" role="group" aria-label="Choose a day"></div>
+        <button type="button" class="cal-open-link" id="open-calendar">
+          <span class="ms" aria-hidden="true">calendar_month</span>
+          Open calendar view
+        </button>
+      </div>
+
+      <div class="filter-block">
+        <label class="filter-label" for="search">Search</label>
+        <div class="search-field">
+          <span class="ms" aria-hidden="true">search</span>
+          <input type="search" id="search" placeholder="Title, speaker, organization" autocomplete="off" />
+        </div>
+        <p class="filter-hint">Matches any selected topic, or words in the title, description, or organization.</p>
+      </div>
+
+      <div class="filter-block" id="topic-block" hidden>
+        <span class="filter-label" id="topic-label">Topics</span>
+        <div class="chip-row" id="topic-group" data-filter="topic" role="group" aria-labelledby="topic-label"></div>
+      </div>
+
+      <div class="filter-block">
+        <span class="filter-label" id="ideo-label">Ideology / area</span>
+        <div class="ideo-list" id="ideo-list" role="group" aria-labelledby="ideo-label">
+          <label class="ideo-row">
+            <input type="checkbox" value="libertarian" />
+            <span class="ideo-swatch" style="background:#C97703"></span>
+            <span class="ideo-name">Libertarian</span>
+            <span class="ideo-count" data-count-for="libertarian">0</span>
+          </label>
+          <label class="ideo-row">
+            <input type="checkbox" value="conservative" />
+            <span class="ideo-swatch" style="background:#C64D2D"></span>
+            <span class="ideo-name">Conservative</span>
+            <span class="ideo-count" data-count-for="conservative">0</span>
+          </label>
+          <label class="ideo-row">
+            <input type="checkbox" value="progressive" />
+            <span class="ideo-swatch" style="background:#4002B3"></span>
+            <span class="ideo-name">Progressive</span>
+            <span class="ideo-count" data-count-for="progressive">0</span>
+          </label>
+          <label class="ideo-row">
+            <input type="checkbox" value="foreign_policy" />
+            <span class="ideo-swatch" style="background:#0D0E51"></span>
+            <span class="ideo-name">Foreign policy</span>
+            <span class="ideo-count" data-count-for="foreign_policy">0</span>
+          </label>
+          <label class="ideo-row">
+            <input type="checkbox" value="abundance_yimby" />
+            <span class="ideo-swatch" style="background:#006600"></span>
+            <span class="ideo-name">Abundance / YIMBY</span>
+            <span class="ideo-count" data-count-for="abundance_yimby">0</span>
+          </label>
+          <label class="ideo-row">
+            <input type="checkbox" value="law" />
+            <span class="ideo-swatch" style="background:#7C756D"></span>
+            <span class="ideo-name">Law</span>
+            <span class="ideo-count" data-count-for="law">0</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="filter-block">
+        <span class="filter-label" id="format-label">Format</span>
+        <div class="segmented segmented-4" role="radiogroup" aria-labelledby="format-label" data-filter="format">
+          <button type="button" role="radio" data-value="all" aria-checked="true">All</button>
+          <button type="button" role="radio" data-value="in_person" aria-checked="false">In person</button>
+          <button type="button" role="radio" data-value="hybrid" aria-checked="false">Hybrid</button>
+          <button type="button" role="radio" data-value="online" aria-checked="false">Online</button>
+        </div>
+      </div>
+
+      <div class="filter-block">
+        <span class="filter-label" id="cost-label">Cost</span>
+        <div class="segmented segmented-3" role="radiogroup" aria-labelledby="cost-label" data-filter="cost">
+          <button type="button" role="radio" data-value="all" aria-checked="true">All</button>
+          <button type="button" role="radio" data-value="free" aria-checked="false">Free</button>
+          <button type="button" role="radio" data-value="paid" aria-checked="false">Paid</button>
+        </div>
+        <p class="filter-hint">Events with unlisted cost appear under both.</p>
+      </div>
+
+      <div class="filter-block">
+        <span class="filter-label" id="time-label">Time of day</span>
+        <div class="chip-row" data-filter="time" role="group" aria-labelledby="time-label">
+          <button type="button" class="chip" data-value="morning" aria-pressed="false" title="Before 11:00 ET">Morning</button>
+          <button type="button" class="chip" data-value="midday" aria-pressed="false" title="11:00–12:59 ET">Midday</button>
+          <button type="button" class="chip" data-value="early_afternoon" aria-pressed="false" title="1:00–3:29 p.m. ET">Early afternoon</button>
+          <button type="button" class="chip" data-value="late_afternoon" aria-pressed="false" title="3:30–5:29 p.m. ET">Late afternoon</button>
+          <button type="button" class="chip" data-value="evening" aria-pressed="false" title="5:30 p.m. ET and later">Evening</button>
+        </div>
+      </div>
+
+      <div class="filter-block">
+        <span class="filter-label" id="perk-label">Perks</span>
+        <div class="chip-row" data-filter="perk" role="group" aria-labelledby="perk-label">
+          <button type="button" class="chip" data-value="free_food" aria-pressed="false">Free food</button>
+          <button type="button" class="chip" data-value="free_drinks" aria-pressed="false">Free drinks</button>
+          <button type="button" class="chip" data-value="young_professionals" aria-pressed="false">Young professionals</button>
+        </div>
+      </div>
+
+      <div class="filter-footer">
+        <button type="button" id="more-dates" aria-expanded="false" aria-controls="date-range">More: dates</button>
+        <button type="button" class="text-link" id="clear-filters">Clear filters</button>
+      </div>
+      <div id="date-range" class="date-range" hidden>
+        <label>From <input type="date" id="date-from" /></label>
+        <label>To <input type="date" id="date-to" /></label>
+      </div>
+
+      <button type="button" class="sheet-only sheet-apply" id="close-filters">Show events</button>
+    </aside>
+
+    <main class="main" id="main">
+      <div class="heading-row">
+        <div class="heading-left">
+          <button type="button" class="week-nav" id="week-prev" hidden aria-label="Previous week">
+            <span class="ms" aria-hidden="true">chevron_left</span>
+          </button>
+          <h2 class="main-title" id="main-title">Next three days</h2>
+          <button type="button" class="week-nav" id="week-next" hidden aria-label="Next week">
+            <span class="ms" aria-hidden="true">chevron_right</span>
+          </button>
+          <p class="main-range" id="main-range"></p>
+          <button type="button" class="text-link back-today" id="back-today" hidden>Back to today</button>
+        </div>
+        <div class="heading-right">
+          <button type="button" class="filters-open-btn" id="open-filters" aria-haspopup="dialog" aria-controls="sidebar">
+            <span class="ms" aria-hidden="true">tune</span>
+            Filters
+          </button>
+          <p class="tz-label">Eastern Time</p>
+        </div>
+      </div>
+
+      <p id="results-meta" class="sr-only" aria-live="polite"></p>
+
+      <div id="list-view">
+        <div id="event-list" aria-label="Events"></div>
+      </div>
+      <div id="cal-view" hidden>
+        <div id="week-board" class="week-board" aria-label="Week"></div>
+        <div id="day-strip" class="day-strip" role="tablist" aria-label="Days this week"></div>
+        <div id="strip-day" class="strip-day"></div>
+      </div>
+
+      <section class="newsletter" aria-labelledby="newsletter-heading">
+        <div class="newsletter-copy">
+          <span class="newsletter-kicker">Newsletter</span>
+          <h2 id="newsletter-heading">Get the weekly email</h2>
+          <p>A free Sunday roundup of DC politics and ideas events.</p>
+        </div>
+        <a class="newsletter-cta" href="https://docs.google.com/forms/d/e/1FAIpQLSdxzwrgjC-yztKV5_CSZXdpjx6nCL9oxtGnp3xctCMIwN-HSg/viewform" target="_blank" rel="noopener noreferrer">Sign up ↗</a>
+      </section>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <p>
+      A curated listing of upcoming DC politics and ideas events,
+      including in-person, hybrid, and online —
+      think tanks, policy briefings, happy hours, and meetups.
+      Times are Eastern. Updated daily: scraped in the morning, verified and published around midday.
+      Not exhaustive, and not an official calendar.
+    </p>
+  </footer>
+
+  <dialog id="about-dialog" aria-labelledby="about-heading">
+    <div class="dialog-head">
+      <p class="eyebrow">About</p>
+      <button type="button" class="icon-btn" id="about-close" aria-label="Close about">
+        <span class="ms" aria-hidden="true">close</span>
+      </button>
+    </div>
+    <h2 id="about-heading">What this is</h2>
+    <p class="about-lead">
+      A curated listing of upcoming DC politics and ideas events, including in-person, hybrid, and online, across the spectrum — libertarian, conservative, progressive, foreign policy, and abundance/YIMBY. It is updated as new events are announced.
+    </p>
+    <dl class="about-facts">
+      <div>
+        <dt>Window</dt>
+        <dd>The list shows upcoming events from today through about the next 7 years, in Eastern Time. The calendar pages about 3 months ahead and marks those days.</dd>
+      </div>
+      <div>
+        <dt>Sources</dt>
+        <dd>Public organization calendars, newsletters, and social posts. Details are checked against the source pages.</dd>
+      </div>
+      <div>
+        <dt>Times</dt>
+        <dd>Eastern Time.</dd>
+      </div>
+      <div>
+        <dt>Maintenance</dt>
+        <dd>Continuously updated: scraped in the morning, then verified and published around midday.</dd>
+      </div>
+      <div>
+        <dt>Install</dt>
+        <dd>Add this page to your home screen to open it like an app. On iPhone or iPad: Share, then Add to Home Screen. On Android or desktop Chrome: Install app, or the browser’s install menu. Refresh loads the latest published events.</dd>
+      </div>
+      <div>
+        <dt>Newsletter</dt>
+        <dd>The signup is an external Google Form and asks for your name, email, and institution. Opt in only if you want the email.</dd>
+      </div>
+    </dl>
+    <p class="about-note">A working list — not exhaustive, and not an official calendar.</p>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

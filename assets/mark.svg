@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <g transform="translate(13.971 13.25) scale(0.180288)" fill="#c5a028">
+    <g transform="translate(20 128)" fill="#f4efe2" stroke="#1a1408" stroke-width="3.2" stroke-linejoin="round" paint-order="stroke fill">
+      <circle cx="0" cy="0" r="12.5"/>
+      <path d="M-17 13.5c0-9.5 6.5-15 17-15s17 5.5 17 15v15c0 3.4-3.2 6.2-7.4 6.2h-19.2c-4.2 0-7.4-2.8-7.4-6.2z"/>
+    </g>
+    <g transform="translate(180 128)" fill="#f4efe2" stroke="#1a1408" stroke-width="3.2" stroke-linejoin="round" paint-order="stroke fill">
+      <circle cx="0" cy="0" r="12.5"/>
+      <path d="M-17 13.5c0-9.5 6.5-15 17-15s17 5.5 17 15v15c0 3.4-3.2 6.2-7.4 6.2h-19.2c-4.2 0-7.4-2.8-7.4-6.2z"/>
+    </g>
+    <ellipse cx="100" cy="146" rx="80" ry="27"/>
+    <path d="M66 94 C66 46 134 46 134 94 Z"/>
+    <rect x="88" y="36" width="24" height="12" rx="1.5"/>
+    <rect x="93" y="28" width="14" height="10" rx="1"/>
+    <rect x="97.6" y="10" width="4.8" height="20" rx="1"/>
+    <circle cx="100" cy="9" r="2.8"/>
+    <path d="M100 28 V84" stroke="#8d7012" stroke-width="1.7" fill="none"/>
+    <path d="M76 50 Q86 76 96 84" stroke="#8d7012" stroke-width="1.45" fill="none"/>
+    <path d="M124 50 Q114 76 104 84" stroke="#8d7012" stroke-width="1.45" fill="none"/>
+    <rect x="58" y="90" width="84" height="10" rx="1"/>
+    <rect x="60.20" y="98" width="12.20" height="16" rx="0.6"/>
+    <rect x="77.00" y="98" width="12.20" height="16" rx="0.6"/>
+    <rect x="93.80" y="98" width="12.20" height="16" rx="0.6"/>
+    <rect x="110.60" y="98" width="12.20" height="16" rx="0.6"/>
+    <rect x="127.40" y="98" width="12.20" height="16" rx="0.6"/>
+    <rect x="52" y="114" width="96" height="6.5"/>
+    <rect x="46" y="119.5" width="108" height="6"/>
+    <g transform="translate(56 170) scale(1.05)" fill="#f4efe2" stroke="#1a1408" stroke-width="3.2" stroke-linejoin="round" paint-order="stroke fill">
+      <circle cx="0" cy="0" r="12.5"/>
+      <path d="M-17 13.5c0-9.5 6.5-15 17-15s17 5.5 17 15v15c0 3.4-3.2 6.2-7.4 6.2h-19.2c-4.2 0-7.4-2.8-7.4-6.2z"/>
+    </g>
+    <g transform="translate(144 170) scale(1.05)" fill="#f4efe2" stroke="#1a1408" stroke-width="3.2" stroke-linejoin="round" paint-order="stroke fill">
+      <circle cx="0" cy="0" r="12.5"/>
+      <path d="M-17 13.5c0-9.5 6.5-15 17-15s17 5.5 17 15v15c0 3.4-3.2 6.2-7.4 6.2h-19.2c-4.2 0-7.4-2.8-7.4-6.2z"/>
+    </g>
+  </g>
+</svg>
