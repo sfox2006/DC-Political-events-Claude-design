@@ -100,8 +100,17 @@
     weekNext: document.getElementById("week-next"),
     openCalendar: document.getElementById("open-calendar"),
     openFilters: document.getElementById("open-filters"),
+    openFiltersPhone: document.getElementById("open-filters-phone"),
     closeFilters: document.getElementById("close-filters"),
+    sheetClearBottom: document.getElementById("sheet-clear-bottom"),
     sheetBackdrop: document.getElementById("sheet-backdrop"),
+    menuToggle: document.getElementById("menu-toggle"),
+    phoneStrip: document.getElementById("phone-strip"),
+    monthSheet: document.getElementById("month-sheet"),
+    monthPanel: document.querySelector(".month-panel"),
+    openMonth: document.getElementById("open-month"),
+    closeMonth: document.getElementById("close-month"),
+    monthBackdrop: document.getElementById("month-backdrop"),
     sidebar: document.getElementById("sidebar"),
     brand: document.getElementById("brand-home"),
     aboutOpen: document.getElementById("about-open"),
@@ -1096,6 +1105,16 @@
     return parts.join("");
   }
 
+  function formatCardWhen(event) {
+    const ymd = eventYmdInTz(event.start);
+    const today = todayYmd();
+    let day;
+    if (ymdCmp(ymd, today) === 0) day = "Today";
+    else if (ymdCmp(ymd, addDays(today, 1)) === 0) day = "Tomorrow";
+    else day = `${WEEKDAYS_SHORT[weekdayIndex(ymd)]}, ${MONTHS_SMALL[ymd.m - 1]} ${ymd.d}`;
+    return `${day} · ${formatStartTime(event.start)}`;
+  }
+
   function renderEventRow(event) {
     const open = state.openEventId === event.id;
     const ideo = ideologyView(event);
@@ -1109,12 +1128,17 @@
             <span class="event-format">${escapeHtml(formatLabel(event.format))}</span>
           </span>
           <span class="event-main">
+            <span class="event-dateline">${escapeHtml(formatCardWhen(event))}</span>
             <span class="event-eyebrow">
               ${org ? `<span class="event-org">${escapeHtml(org)}</span>` : ""}
               ${ideo ? `<span class="event-ideo" style="color:${ideo.text || ideo.color}">${escapeHtml(ideo.label)}</span>` : ""}
             </span>
             <span class="event-title">${escapeHtml(event.title || "Untitled event")}</span>
             <span class="event-meta">${escapeHtml(metaLine(event))}</span>
+            <span class="event-badges">
+              <span class="event-badge">${escapeHtml(formatLabel(event.format))}</span>
+              <span class="event-badge">${escapeHtml(costShort(event))}</span>
+            </span>
           </span>
           <span class="ms chevron" aria-hidden="true">${open ? "expand_less" : "expand_more"}</span>
         </button>
@@ -1172,6 +1196,11 @@
       return;
     }
     const today = todayYmd();
+    if (isPhoneLayout()) {
+      const ymd = state.listStart || today;
+      els.eventList.innerHTML = renderDaySection(ymd, eventsOnDay(ymd, events), today);
+      return;
+    }
     const html = [0, 1, 2]
       .map((offset) => {
         const ymd = addDays(state.listStart, offset);
@@ -1183,6 +1212,86 @@
 
   function isMobileLayout() {
     return window.matchMedia("(max-width: 900px)").matches;
+  }
+
+  function isPhoneLayout() {
+    return window.matchMedia("(max-width: 700px)").matches;
+  }
+
+  function activeFilterCount() {
+    const f = getFilters();
+    let count = 0;
+    if (f.search) count += 1;
+    if (f.from || f.to) count += 1;
+    count += (f.topics || []).length;
+    count += f.ideologies.length;
+    count += (f.time || []).length;
+    if (f.freeFood) count += 1;
+    if (f.freeDrinks) count += 1;
+    if (f.yp) count += 1;
+    if (f.cost && f.cost !== "all") count += 1;
+    if (f.format && f.format !== "all") count += 1;
+    return count;
+  }
+
+  function syncPhoneDom() {
+    const phone = isPhoneLayout();
+    document.body.classList.toggle("is-phone", phone);
+    const search = document.getElementById("search-block");
+    const searchHome = document.getElementById("search-home");
+    const searchSlot = document.getElementById("phone-search-slot");
+    const mini = document.querySelector(".mini-cal-block");
+    const miniHome = document.getElementById("mini-home");
+    const monthSlot = document.getElementById("month-slot");
+    if (search && searchHome && searchSlot) {
+      const target = phone ? searchSlot : searchHome;
+      if (search.parentElement !== target) target.appendChild(search);
+    }
+    if (mini && miniHome && monthSlot) {
+      const target = phone ? monthSlot : miniHome;
+      if (mini.parentElement !== target) target.appendChild(mini);
+    }
+    document.querySelectorAll(".section-toggle").forEach((btn) => {
+      if (phone) btn.removeAttribute("tabindex");
+      else btn.setAttribute("tabindex", "-1");
+    });
+    if (els.dateRange && els.moreDates) {
+      if (phone) els.dateRange.hidden = false;
+      else els.dateRange.hidden = els.moreDates.getAttribute("aria-expanded") !== "true";
+    }
+    if (!phone) {
+      closeMenu();
+      closeMonthSheet(false);
+    }
+  }
+
+  function renderPhoneStrip(events) {
+    if (!els.phoneStrip) return;
+    const today = todayYmd();
+    const selected = state.listStart || today;
+    let last = horizonEnd();
+    const cap = addDays(today, 120);
+    if (ymdCmp(last, cap) > 0) last = cap;
+    if (ymdCmp(selected, last) > 0) last = selected;
+    const parts = [];
+    for (let ymd = today; ymdCmp(ymd, last) <= 0; ymd = addDays(ymd, 1)) {
+      const count = eventsOnDay(ymd, events).length;
+      const selectedDay = ymdCmp(ymd, selected) === 0;
+      const dow = ymdCmp(ymd, today) === 0 ? "Today" : WEEKDAYS_SHORT[weekdayIndex(ymd)];
+      parts.push(
+        `<button type="button" class="phone-day${selectedDay ? " is-selected" : ""}${count ? " has-events" : ""}" role="tab" data-ymd="${ymdKey(ymd)}" aria-selected="${selectedDay ? "true" : "false"}" aria-label="${escapeHtml(formatLongDate(ymd))}, ${count} event${count === 1 ? "" : "s"}">` +
+          `<span class="phone-dow">${escapeHtml(dow)}</span>` +
+          `<span class="phone-num">${ymd.d}</span>` +
+          `<span class="phone-dot"></span>` +
+        `</button>`
+      );
+    }
+    els.phoneStrip.innerHTML = parts.join("");
+    const current = els.phoneStrip.querySelector(".is-selected");
+    if (current) {
+      const left = current.offsetLeft - (els.phoneStrip.clientWidth - current.offsetWidth) / 2;
+      els.phoneStrip.scrollLeft = Math.max(0, left);
+    }
   }
 
   function renderWeek(events) {
@@ -1366,7 +1475,8 @@
 
   function updateChrome(events) {
     const today = todayYmd();
-    const calendar = state.view === "calendar";
+    const phone = isPhoneLayout();
+    const calendar = state.view === "calendar" && !phone;
     document.body.classList.toggle("is-calendar", calendar);
     els.listView.hidden = calendar;
     els.calView.hidden = !calendar;
@@ -1381,7 +1491,13 @@
     if (els.viewToggleLabel) els.viewToggleLabel.textContent = calendar ? "List view" : "Calendar";
     els.viewToggle.setAttribute("aria-pressed", calendar ? "true" : "false");
 
-    if (calendar) {
+    if (phone) {
+      const ymd = state.listStart || today;
+      const rel = relLabel(ymd, today);
+      els.mainTitle.textContent = rel === "Today" || rel === "Tomorrow" ? rel : formatLongDate(ymd);
+      els.mainRange.textContent = formatLongDate(ymd);
+      els.backToday.hidden = ymdCmp(ymd, today) === 0;
+    } else if (calendar) {
       const a = state.weekStart;
       const b = addDays(a, 6);
       els.mainTitle.textContent = ymdCmp(a, today) === 0 ? "This week" : formatTitleRange(a, b);
@@ -1395,7 +1511,11 @@
       els.backToday.hidden = ymdCmp(a, today) === 0;
     }
 
-    const shown = eventsLoaded ? visibleCount(events) : 0;
+    const shown = eventsLoaded
+      ? phone
+        ? eventsOnDay(state.listStart || today, events).length
+        : visibleCount(events)
+      : 0;
     if (els.closeFilters) {
       els.closeFilters.textContent = eventsLoaded
         ? `Show ${shown} event${shown === 1 ? "" : "s"}`
@@ -1403,12 +1523,19 @@
     }
     if (els.meta) {
       if (!eventsLoaded) els.meta.textContent = "Loading events";
-      else if (calendar) {
+      else if (phone) {
+        els.meta.textContent = `${shown} events, ${formatLongDate(state.listStart || today)}`;
+      } else if (calendar) {
         els.meta.textContent = `${shown} events, ${formatSmallRange(state.weekStart, addDays(state.weekStart, 6))}`;
       } else {
         els.meta.textContent = `${shown} events, ${formatSmallRange(state.listStart, addDays(state.listStart, 2))}`;
       }
     }
+    const filtersOn = activeFilterCount();
+    document.querySelectorAll("[data-filter-count]").forEach((badge) => {
+      badge.hidden = filtersOn === 0;
+      badge.textContent = String(filtersOn);
+    });
   }
 
   function scrollPending() {
@@ -1427,15 +1554,23 @@
   }
 
   function render() {
+    syncPhoneDom();
     const events = eventsLoaded ? filteredEvents() : [];
     updateChrome(events);
     updateIdeologyCounts();
     renderMiniCalendar();
-    if (state.view === "list") {
+    if (isPhoneLayout()) {
+      renderPhoneStrip(events);
       renderList(events);
       els.weekBoard.innerHTML = "";
       els.dayStrip.innerHTML = "";
       els.stripDay.innerHTML = "";
+    } else if (state.view === "list") {
+      renderList(events);
+      els.weekBoard.innerHTML = "";
+      els.dayStrip.innerHTML = "";
+      els.stripDay.innerHTML = "";
+      if (els.phoneStrip) els.phoneStrip.innerHTML = "";
     } else {
       els.eventList.innerHTML = "";
       renderWeek(events);
@@ -1561,14 +1696,62 @@
     toggleOpen(card.getAttribute("data-id"));
   }
 
+  function closeMenu() {
+    document.body.classList.remove("menu-open");
+    if (!els.menuToggle) return;
+    els.menuToggle.setAttribute("aria-expanded", "false");
+    els.menuToggle.setAttribute("aria-label", "Open menu");
+    const icon = els.menuToggle.querySelector(".ms");
+    if (icon) icon.textContent = "menu";
+  }
+
+  function openMenuPanel() {
+    closeMonthSheet(false);
+    closeFilterSheet(false);
+    document.body.classList.add("menu-open");
+    els.menuToggle.setAttribute("aria-expanded", "true");
+    els.menuToggle.setAttribute("aria-label", "Close menu");
+    const icon = els.menuToggle.querySelector(".ms");
+    if (icon) icon.textContent = "close";
+    const first = [...document.querySelectorAll("#overflow-menu button, #overflow-menu a")].find(
+      (el) => !el.hidden && el.offsetParent !== null
+    );
+    if (first) first.focus();
+  }
+
+  function openMonthSheet() {
+    if (!isPhoneLayout() || !els.monthSheet) return;
+    closeMenu();
+    closeFilterSheet(false);
+    document.body.classList.add("month-open");
+    els.monthSheet.hidden = false;
+    if (els.closeMonth) els.closeMonth.focus();
+  }
+
+  function closeMonthSheet(restore) {
+    const was = document.body.classList.contains("month-open");
+    document.body.classList.remove("month-open");
+    if (els.monthSheet) els.monthSheet.hidden = true;
+    if (was && restore && els.openMonth) els.openMonth.focus();
+  }
+
+  function filtersOpener() {
+    if (isPhoneLayout() && els.openFiltersPhone) return els.openFiltersPhone;
+    return els.openFilters;
+  }
+
   function openFilterSheet() {
     if (!window.matchMedia("(max-width: 900px)").matches) return;
+    closeMenu();
+    closeMonthSheet(false);
     document.body.classList.add("filters-open");
     els.sidebar.setAttribute("role", "dialog");
     els.sidebar.setAttribute("aria-modal", "true");
     els.sidebar.setAttribute("aria-labelledby", "filters-heading");
     if (els.sheetBackdrop) els.sheetBackdrop.hidden = false;
-    const start = document.getElementById("sheet-clear") || els.search;
+    const start = isPhoneLayout()
+      ? [...els.sidebar.querySelectorAll(".section-toggle")].find((el) => !el.closest("[hidden]"))
+      : document.getElementById("sheet-clear") || els.search;
     if (start) start.focus();
   }
 
@@ -1578,12 +1761,13 @@
     els.sidebar.removeAttribute("role");
     els.sidebar.removeAttribute("aria-modal");
     if (els.sheetBackdrop) els.sheetBackdrop.hidden = true;
-    if (was && restore && els.openFilters) els.openFilters.focus();
+    const opener = filtersOpener();
+    if (was && restore && opener) opener.focus();
   }
 
-  function trapSheet(e) {
-    if (e.key !== "Tab" || !document.body.classList.contains("filters-open")) return;
-    const focusable = els.sidebar.querySelectorAll("button, [href], input, select, textarea");
+  function trapIn(e, root) {
+    if (e.key !== "Tab" || !root) return;
+    const focusable = root.querySelectorAll("button, [href], input, select, textarea");
     const list = [...focusable].filter((el) => !el.disabled && !el.closest("[hidden]") && el.offsetParent !== null);
     if (!list.length) return;
     const first = list[0];
@@ -1604,6 +1788,18 @@
     });
     document.getElementById("ideo-list").addEventListener("change", render);
     els.sidebar.addEventListener("click", (e) => {
+      const toggle = e.target.closest(".section-toggle");
+      if (toggle && isPhoneLayout()) {
+        const expanded = toggle.getAttribute("aria-expanded") === "true";
+        const panel = document.getElementById(toggle.getAttribute("aria-controls"));
+        toggle.setAttribute("aria-expanded", expanded ? "false" : "true");
+        const block = toggle.closest(".filter-block");
+        if (block) block.classList.toggle("is-collapsed", expanded);
+        const icon = toggle.querySelector(".section-chevron");
+        if (icon) icon.textContent = expanded ? "expand_more" : "expand_less";
+        if (panel) panel.hidden = expanded;
+        return;
+      }
       const radio = e.target.closest(".segmented [role='radio']");
       if (radio && els.sidebar.contains(radio)) {
         setSegment(radio.closest(".segmented").dataset.filter, radio.dataset.value);
@@ -1631,6 +1827,7 @@
     });
     els.clear.addEventListener("click", clearFilters);
     if (els.sheetClear) els.sheetClear.addEventListener("click", clearFilters);
+    if (els.sheetClearBottom) els.sheetClearBottom.addEventListener("click", clearFilters);
     els.moreDates.addEventListener("click", () => {
       const open = els.dateRange.hidden;
       els.dateRange.hidden = !open;
@@ -1680,12 +1877,47 @@
       const ymd = parseYmdKey(button.dataset.ymd);
       focusYmdKey = button.dataset.ymd;
       state.listStart = ymd;
+      state.weekStart = ymd;
+      state.stripDay = ymd;
       state.view = "list";
       state.miniYear = ymd.y;
       state.miniMonth = ymd.m;
+      state.openEventId = null;
       closeFilterSheet(false);
+      closeMonthSheet(false);
       render();
     });
+    if (els.phoneStrip) {
+      els.phoneStrip.addEventListener("click", (e) => {
+        const button = e.target.closest("button[data-ymd]");
+        if (!button) return;
+        const ymd = parseYmdKey(button.dataset.ymd);
+        state.listStart = ymd;
+        state.weekStart = ymd;
+        state.stripDay = ymd;
+        state.view = "list";
+        state.miniYear = ymd.y;
+        state.miniMonth = ymd.m;
+        state.openEventId = null;
+        render();
+      });
+    }
+    if (els.menuToggle) {
+      els.menuToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (document.body.classList.contains("menu-open")) closeMenu();
+        else openMenuPanel();
+      });
+    }
+    const overflow = document.getElementById("overflow-menu");
+    if (overflow) {
+      overflow.addEventListener("click", () => {
+        if (isPhoneLayout()) closeMenu();
+      });
+    }
+    if (els.openMonth) els.openMonth.addEventListener("click", openMonthSheet);
+    if (els.closeMonth) els.closeMonth.addEventListener("click", () => closeMonthSheet(true));
+    if (els.monthBackdrop) els.monthBackdrop.addEventListener("click", () => closeMonthSheet(true));
     els.dayStrip.addEventListener("click", (e) => {
       const button = e.target.closest("button[data-ymd]");
       if (!button) return;
@@ -1696,9 +1928,11 @@
     els.calView.addEventListener("click", onResultClick);
     document.addEventListener("click", (e) => {
       if (!e.target.closest(".cal-menu")) closeMenus(false);
+      if (document.body.classList.contains("menu-open") && !e.target.closest(".top-actions")) closeMenu();
     });
     document.addEventListener("keydown", (e) => {
-      trapSheet(e);
+      if (document.body.classList.contains("month-open")) trapIn(e, els.monthPanel);
+      else if (document.body.classList.contains("filters-open")) trapIn(e, els.sidebar);
       if (e.key === "ArrowDown" || e.key === "ArrowUp") {
         const panel = e.target.closest(".cal-menu-panel");
         if (!panel) return;
@@ -1720,6 +1954,17 @@
         e.preventDefault();
         return;
       }
+      if (document.body.classList.contains("month-open")) {
+        closeMonthSheet(true);
+        e.preventDefault();
+        return;
+      }
+      if (document.body.classList.contains("menu-open")) {
+        closeMenu();
+        if (els.menuToggle) els.menuToggle.focus();
+        e.preventDefault();
+        return;
+      }
       if (document.body.classList.contains("filters-open")) {
         closeFilterSheet(true);
         e.preventDefault();
@@ -1734,14 +1979,22 @@
       }
     });
     els.openFilters.addEventListener("click", openFilterSheet);
+    if (els.openFiltersPhone) els.openFiltersPhone.addEventListener("click", openFilterSheet);
     els.closeFilters.addEventListener("click", () => closeFilterSheet(true));
     els.sheetBackdrop.addEventListener("click", () => closeFilterSheet(true));
     let wasMobile = isMobileLayout();
+    let wasPhone = isPhoneLayout();
     window.addEventListener("resize", () => {
       if (!isMobileLayout()) closeFilterSheet(false);
+      if (!isPhoneLayout()) {
+        closeMenu();
+        closeMonthSheet(false);
+      }
       const mobile = isMobileLayout();
-      if (mobile !== wasMobile) {
+      const phone = isPhoneLayout();
+      if (mobile !== wasMobile || phone !== wasPhone) {
         wasMobile = mobile;
+        wasPhone = phone;
         render();
       }
     });

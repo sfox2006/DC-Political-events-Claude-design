@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="description" content="Upcoming DC politics and ideas events, in person, hybrid, and online, across the spectrum." />
   <meta name="theme-color" content="#0D0E51" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -37,6 +37,7 @@
 <body>
   <a class="skip-link" href="#main">Skip to events</a>
 
+  <div class="sticky-chrome">
   <header class="topbar">
     <h1 class="brand-title">
       <button type="button" class="brand-home" id="brand-home">
@@ -46,7 +47,10 @@
       </button>
     </h1>
     <div class="top-actions">
-      <div class="top-actions-row">
+      <button type="button" class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="overflow-menu" aria-label="Open menu">
+        <span class="ms" aria-hidden="true">menu</span>
+      </button>
+      <div class="top-actions-row" id="overflow-menu">
         <button type="button" class="view-toggle" id="view-toggle" aria-pressed="false">
           <span class="ms" aria-hidden="true">calendar_month</span>
           <span id="view-toggle-label">Calendar</span>
@@ -62,6 +66,24 @@
       <p class="refresh-status" id="refresh-status" role="status" aria-live="polite"></p>
     </div>
   </header>
+  <div class="phone-bar" id="phone-bar">
+    <div class="phone-search-row">
+      <div id="phone-search-slot"></div>
+      <button type="button" class="filters-open-btn phone-filters" id="open-filters-phone" aria-haspopup="dialog" aria-controls="sidebar">
+        <span class="ms" aria-hidden="true">tune</span>
+        Filters
+        <span class="filter-count" data-filter-count hidden>0</span>
+      </button>
+    </div>
+    <div class="phone-dayrow">
+      <div class="phone-strip" id="phone-strip" role="tablist" aria-label="Upcoming days"></div>
+      <button type="button" class="phone-cal-btn" id="open-month" aria-haspopup="dialog" aria-controls="month-sheet">
+        <span class="ms" aria-hidden="true">calendar_month</span>
+        Calendar
+      </button>
+    </div>
+  </div>
+  </div>
 
   <p class="pull-indicator" id="pull-indicator" hidden>Pull to refresh</p>
   <div class="install-tip" id="install-tip" hidden>
@@ -81,6 +103,7 @@
       </div>
       <div class="sidebar-scroll">
 
+      <div id="mini-home">
       <div class="filter-block mini-cal-block">
         <div class="mini-cal-head">
           <span class="mini-cal-title" id="calendar-month">Calendar</span>
@@ -102,8 +125,10 @@
           Open calendar view
         </button>
       </div>
+      </div>
 
-      <div class="filter-block">
+      <div id="search-home">
+      <div class="filter-block" id="search-block">
         <label class="filter-label" for="search">Search</label>
         <div class="search-field">
           <span class="ms" aria-hidden="true">search</span>
@@ -111,14 +136,24 @@
         </div>
         <p class="filter-hint">Matches any selected topic, or words in the title, description, or organization.</p>
       </div>
+      </div>
 
       <div class="filter-block" id="topic-block" hidden>
-        <span class="filter-label" id="topic-label">Topics</span>
-        <div class="chip-row" id="topic-group" data-filter="topic" role="group" aria-labelledby="topic-label"></div>
+        <button type="button" class="section-toggle" aria-expanded="true" aria-controls="topic-panel">
+          <span class="filter-label" id="topic-label">Topics</span>
+          <span class="ms section-chevron" aria-hidden="true">expand_less</span>
+        </button>
+        <div class="section-body" id="topic-panel">
+          <div class="chip-row" id="topic-group" data-filter="topic" role="group" aria-labelledby="topic-label"></div>
+        </div>
       </div>
 
       <div class="filter-block">
-        <span class="filter-label" id="ideo-label">Ideology / area</span>
+        <button type="button" class="section-toggle" aria-expanded="true" aria-controls="ideo-panel">
+          <span class="filter-label" id="ideo-label">Ideology / area</span>
+          <span class="ms section-chevron" aria-hidden="true">expand_less</span>
+        </button>
+        <div class="section-body" id="ideo-panel">
         <div class="ideo-list" id="ideo-list" role="group" aria-labelledby="ideo-label">
           <label class="ideo-row">
             <input type="checkbox" value="libertarian" />
@@ -157,30 +192,45 @@
             <span class="ideo-count" data-count-for="law">0</span>
           </label>
         </div>
+        </div>
       </div>
 
       <div class="filter-block">
-        <span class="filter-label" id="format-label">Format</span>
+        <button type="button" class="section-toggle" aria-expanded="true" aria-controls="format-panel">
+          <span class="filter-label" id="format-label">Format</span>
+          <span class="ms section-chevron" aria-hidden="true">expand_less</span>
+        </button>
+        <div class="section-body" id="format-panel">
         <div class="segmented segmented-4" role="radiogroup" aria-labelledby="format-label" data-filter="format">
           <button type="button" role="radio" data-value="all" aria-checked="true">All</button>
           <button type="button" role="radio" data-value="in_person" aria-checked="false">In person</button>
           <button type="button" role="radio" data-value="hybrid" aria-checked="false">Hybrid</button>
           <button type="button" role="radio" data-value="online" aria-checked="false">Online</button>
         </div>
+        </div>
       </div>
 
       <div class="filter-block">
-        <span class="filter-label" id="cost-label">Cost</span>
+        <button type="button" class="section-toggle" aria-expanded="true" aria-controls="cost-panel">
+          <span class="filter-label" id="cost-label">Cost</span>
+          <span class="ms section-chevron" aria-hidden="true">expand_less</span>
+        </button>
+        <div class="section-body" id="cost-panel">
         <div class="segmented segmented-3" role="radiogroup" aria-labelledby="cost-label" data-filter="cost">
           <button type="button" role="radio" data-value="all" aria-checked="true">All</button>
           <button type="button" role="radio" data-value="free" aria-checked="false">Free</button>
           <button type="button" role="radio" data-value="paid" aria-checked="false">Paid</button>
         </div>
         <p class="filter-hint">Events with unlisted cost appear under both.</p>
+        </div>
       </div>
 
       <div class="filter-block">
-        <span class="filter-label" id="time-label">Time of day</span>
+        <button type="button" class="section-toggle" aria-expanded="true" aria-controls="time-panel">
+          <span class="filter-label" id="time-label">Time of day</span>
+          <span class="ms section-chevron" aria-hidden="true">expand_less</span>
+        </button>
+        <div class="section-body" id="time-panel">
         <div class="chip-row" data-filter="time" role="group" aria-labelledby="time-label">
           <button type="button" class="chip" data-value="morning" aria-pressed="false" title="Before 11:00 ET">Morning</button>
           <button type="button" class="chip" data-value="midday" aria-pressed="false" title="11:00–12:59 ET">Midday</button>
@@ -188,28 +238,45 @@
           <button type="button" class="chip" data-value="late_afternoon" aria-pressed="false" title="3:30–5:29 p.m. ET">Late afternoon</button>
           <button type="button" class="chip" data-value="evening" aria-pressed="false" title="5:30 p.m. ET and later">Evening</button>
         </div>
+        </div>
       </div>
 
       <div class="filter-block">
-        <span class="filter-label" id="perk-label">Perks</span>
+        <button type="button" class="section-toggle" aria-expanded="true" aria-controls="perk-panel">
+          <span class="filter-label" id="perk-label">Perks</span>
+          <span class="ms section-chevron" aria-hidden="true">expand_less</span>
+        </button>
+        <div class="section-body" id="perk-panel">
         <div class="chip-row" data-filter="perk" role="group" aria-labelledby="perk-label">
           <button type="button" class="chip" data-value="free_food" aria-pressed="false">Free food</button>
           <button type="button" class="chip" data-value="free_drinks" aria-pressed="false">Free drinks</button>
           <button type="button" class="chip" data-value="young_professionals" aria-pressed="false">Young professionals</button>
         </div>
+        </div>
       </div>
 
-      <div class="filter-footer">
-        <button type="button" id="more-dates" aria-expanded="false" aria-controls="date-range">More: dates</button>
-        <button type="button" class="text-link" id="clear-filters">Clear filters</button>
-      </div>
-      <div id="date-range" class="date-range" hidden>
-        <label>From <input type="date" id="date-from" /></label>
-        <label>To <input type="date" id="date-to" /></label>
+      <div class="filter-block">
+        <button type="button" class="section-toggle" aria-expanded="true" aria-controls="dates-panel">
+          <span class="filter-label" id="dates-label">Dates</span>
+          <span class="ms section-chevron" aria-hidden="true">expand_less</span>
+        </button>
+        <div class="section-body" id="dates-panel">
+          <div class="filter-footer">
+            <button type="button" id="more-dates" aria-expanded="false" aria-controls="date-range">More: dates</button>
+            <button type="button" class="text-link" id="clear-filters">Clear filters</button>
+          </div>
+          <div id="date-range" class="date-range" hidden>
+            <label>From <input type="date" id="date-from" /></label>
+            <label>To <input type="date" id="date-to" /></label>
+          </div>
+        </div>
       </div>
       </div>
 
-      <button type="button" class="sheet-only sheet-apply" id="close-filters">Show events</button>
+      <div class="sheet-actions sheet-only">
+        <button type="button" class="sheet-clear-bottom" id="sheet-clear-bottom">Clear</button>
+        <button type="button" class="sheet-apply" id="close-filters">Show events</button>
+      </div>
     </aside>
 
     <main class="main" id="main">
@@ -229,6 +296,7 @@
           <button type="button" class="filters-open-btn" id="open-filters" aria-haspopup="dialog" aria-controls="sidebar">
             <span class="ms" aria-hidden="true">tune</span>
             Filters
+            <span class="filter-count" data-filter-count hidden>0</span>
           </button>
           <p class="tz-label">Eastern Time</p>
         </div>
@@ -254,6 +322,20 @@
         <a class="newsletter-cta" href="https://docs.google.com/forms/d/e/1FAIpQLSdxzwrgjC-yztKV5_CSZXdpjx6nCL9oxtGnp3xctCMIwN-HSg/viewform" target="_blank" rel="noopener noreferrer">Sign up ↗</a>
       </section>
     </main>
+  </div>
+
+  <div class="month-sheet" id="month-sheet" hidden>
+    <button type="button" class="sheet-backdrop month-backdrop" id="month-backdrop" aria-label="Close calendar"></button>
+    <div class="month-panel" role="dialog" aria-modal="true" aria-labelledby="month-heading">
+      <div class="sheet-chrome">
+        <span class="sheet-grabber" aria-hidden="true"></span>
+        <div class="sheet-title-row">
+          <h2 id="month-heading">Calendar</h2>
+          <button type="button" class="text-link" id="close-month">Close</button>
+        </div>
+      </div>
+      <div id="month-slot" class="month-slot"></div>
+    </div>
   </div>
 
   <footer class="site-footer">
