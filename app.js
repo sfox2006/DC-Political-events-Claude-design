@@ -11,12 +11,12 @@
   const MONTHS_TITLE = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
   const MONTHS_SMALL = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."];
   const IDEOLOGIES = [
-    { id: "libertarian", label: "Libertarian", color: "#C97703" },
+    { id: "libertarian", label: "Libertarian", color: "#C97703", text: "#5a4a1a" },
     { id: "conservative", label: "Conservative", color: "#C64D2D" },
     { id: "progressive", label: "Progressive", color: "#4002B3" },
     { id: "foreign_policy", label: "Foreign policy", color: "#0D0E51" },
     { id: "abundance_yimby", label: "Abundance / YIMBY", color: "#006600" },
-    { id: "law", label: "Law", color: "#7C756D" },
+    { id: "law", label: "Law", color: "#7C756D", text: "#5c564f" },
   ];
   const IDEO_BY_ID = Object.fromEntries(IDEOLOGIES.map((item) => [item.id, item]));
   const FORMAT_LABELS = {
@@ -1111,7 +1111,7 @@
           <span class="event-main">
             <span class="event-eyebrow">
               ${org ? `<span class="event-org">${escapeHtml(org)}</span>` : ""}
-              ${ideo ? `<span class="event-ideo" style="color:${ideo.color}">${escapeHtml(ideo.label)}</span>` : ""}
+              ${ideo ? `<span class="event-ideo" style="color:${ideo.text || ideo.color}">${escapeHtml(ideo.label)}</span>` : ""}
             </span>
             <span class="event-title">${escapeHtml(event.title || "Untitled event")}</span>
             <span class="event-meta">${escapeHtml(metaLine(event))}</span>
